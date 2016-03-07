@@ -35,11 +35,11 @@ class ComputerScientist: Person {
     }
     
     func say() -> String {
-        <#code#>
+        return "I like code!"
     }
     
     func eat() -> String {
-        <#code#>
+        return "I want 🍕!"
     }
 }
 
@@ -51,11 +51,11 @@ class Banker: Person {
     }
     
     func say() -> String {
-        <#code#>
+        return "I need 💰!"
     }
     
     func eat() -> String {
-        <#code#>
+        return "I eat 💵"
     }
 }
 
@@ -65,16 +65,14 @@ persons.append(Banker(name: "tidjane"))
 persons.append(ComputerScientist(name: "steve"))
 persons.append(ComputerScientist(name: "niklaus"))
 
-let names = persons.reduce(0) {
-    
-}
-//let sayings = ...
-//let eatings = ...
+let names = persons.map{ p in p.name }
+let sayings = persons.map{ p in p.say() }
+let eatings = persons.map{ p in p.eat() }
 
-//persons
-//names
-//sayings
-//eatings
+persons
+names
+sayings
+eatings
 
 
 /*:
@@ -84,6 +82,16 @@ Erweitere Array und schreibe eine Methode `sum`, die die Summe aller Elemente im
 
 */
 
+extension Array where Element: IntegerType {
+    func sum () -> Int {
+        var sum = 0
+        for n in self {
+            sum += n as! Int
+        }
+        return sum
+    }
+}
+
 let array = [1,2,3,4]
-//array.sum()
+array.sum()
 
