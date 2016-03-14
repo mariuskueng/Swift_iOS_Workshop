@@ -34,6 +34,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.delegate = self
     }
     
+    override func viewDidAppear(animated: Bool) {
+        checkPermission()
+    }
+    
     private func checkPermission() {
         NSLog("Checking permission")
         switch(CLLocationManager.authorizationStatus()) {
@@ -83,7 +87,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func performServerRequest() {
-        // TODO
+        let latitude = self.location?.coordinate.latitude
+        let longitude = self.location?.coordinate.longitude
+        weatherRequest = WeatherRequest(latitude: latitude!, longitude: longitude!)
+        
+        weatherRequest?.successBlock = { weatherData in
+            self.cityLabel.text = weatherData.city
+            self.weatherLabel.text = weatherData.weather
+            self.tempLabel.text = weatherData.formattedTemp
+            self.minTempLabel.text = weatherData.formattedMinTemp
+            self.maxTempLabel.text = weatherData.formattedMaxTemp
+            self.humidityLabel.text = weatherData.formattedHumidity
+            
+            WeatherHelper.loadIcon(weatherData.icon, imageView: self.iconImageView)
+        }
+        
+        weatherRequest?.performRequest()
+        
     }
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
@@ -94,7 +114,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     @IBAction func reloadPressed(sender: AnyObject) {
-        // TODO
+        self.startLocationRequest()
+        self.performServerRequest()
     }
 }
 
