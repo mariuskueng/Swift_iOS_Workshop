@@ -32,9 +32,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
 
         locationManager.delegate = self
-    }
-    
-    override func viewDidAppear(animated: Bool) {
         checkPermission()
     }
     
@@ -87,9 +84,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func performServerRequest() {
-        let latitude = self.location?.coordinate.latitude
-        let longitude = self.location?.coordinate.longitude
-        weatherRequest = WeatherRequest(latitude: latitude!, longitude: longitude!)
+        weatherRequest = WeatherRequest(
+            latitude: self.location!.coordinate.longitude,
+            longitude: self.location!.coordinate.longitude
+        )
         
         weatherRequest?.successBlock = { weatherData in
             self.cityLabel.text = weatherData.city
