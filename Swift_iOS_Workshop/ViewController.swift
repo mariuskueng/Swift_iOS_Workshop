@@ -27,9 +27,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var humidityLabel: UILabel!
     
     @IBOutlet weak var iconImageView: UIImageView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
 
         locationManager.delegate = self
         checkPermission()
@@ -84,23 +88,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func performServerRequest() {
-        weatherRequest = WeatherRequest(
-            latitude: self.location!.coordinate.longitude,
-            longitude: self.location!.coordinate.longitude
-        )
-        
-        weatherRequest?.successBlock = { weatherData in
-            self.cityLabel.text = weatherData.city
-            self.weatherLabel.text = weatherData.weather
-            self.tempLabel.text = weatherData.formattedTemp
-            self.minTempLabel.text = weatherData.formattedMinTemp
-            self.maxTempLabel.text = weatherData.formattedMaxTemp
-            self.humidityLabel.text = weatherData.formattedHumidity
-            
-            WeatherHelper.loadIcon(weatherData.icon, imageView: self.iconImageView)
+        if  let location = self.location {
+            self.weatherRequest = WeatherRequest(
+                latitude: location.coordinate.longitude,
+                longitude: location.coordinate.longitude
+            )
+
+            weatherRequest?.successBlock = { weatherData in
+                self.cityLabel.text = weatherData.city
+                self.weatherLabel.text = weatherData.weather
+                self.tempLabel.text = weatherData.formattedTemp
+                self.minTempLabel.text = weatherData.formattedMinTemp
+                self.maxTempLabel.text = weatherData.formattedMaxTemp
+                self.humidityLabel.text = weatherData.formattedHumidity
+
+                WeatherHelper.loadIcon(weatherData.icon, imageView: self.iconImageView)
+            }
+
+            weatherRequest?.failureBlock = { error in
+                NSLog("An error occured while calling the weather API: \(error)")
+            }
+
+            weatherRequest?.performRequest()
         }
         
-        weatherRequest?.performRequest()
         
     }
     
@@ -112,8 +123,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     @IBAction func reloadPressed(sender: AnyObject) {
-        self.startLocationRequest()
-        self.performServerRequest()
+        self.location = nil;
+        startLocationRequest()
     }
 }
 
